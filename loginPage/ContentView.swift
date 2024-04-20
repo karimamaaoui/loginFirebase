@@ -6,12 +6,20 @@
 //
 
 import SwiftUI
+import Firebase
+import FirebaseAuth
 
 struct ContentView: View {
     @State private var selectedIdx = 0
     @State private var options = ["Login", "Create Account"]
     @State private var emailTextField = ""
     @State private var passwordTextField = ""
+    
+    
+    init() {
+        FirebaseApp.configure()
+
+    }
     
     var body: some View {
         NavigationStack {
@@ -52,8 +60,13 @@ struct ContentView: View {
                 
                 
                 Button {
-                } label: {
-                    Text("Login").foregroundColor(.white).font(.system(size: 20 , weight: .semibold))
+                    selectedIdx == 0 ? login() : register()
+                    
+                } 
+            
+            label: {
+                    
+                    Text(selectedIdx == 0 ? "Login":"Create Account").foregroundColor(.white).font(.system(size: 20 , weight: .semibold))
                 }
                 
                 .padding(.vertical)
@@ -70,8 +83,32 @@ struct ContentView: View {
                 
         }
     }
+    
+    
+    func login() {
+        Auth.auth().signIn(withEmail: emailTextField, password: passwordTextField) { (result, error) in
+            if error != nil {
+                print(error?.localizedDescription ?? "")
+            } else {
+                print("success login")
+            }
+        }
+    }
+    
+    
+    func register() {
+        Auth.auth().createUser(withEmail: emailTextField, password: passwordTextField) { (result, error) in
+            if error != nil {
+                print(error?.localizedDescription ?? "")
+            } else {
+                print("success registration")
+            }
+        }
+    }
 }
 
 #Preview {
     ContentView()
 }
+
+
