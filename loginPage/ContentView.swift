@@ -15,14 +15,13 @@ struct ContentView: View {
     @State private var emailTextField = ""
     @State private var passwordTextField = ""
     
-    
     init() {
         FirebaseApp.configure()
 
     }
     
     var body: some View {
-        NavigationStack {
+        NavigationStack() {
             ScrollView  {
                 
                 Picker(selection: $selectedIdx, label: Text("I'm a Picker in a Form")) {
@@ -58,13 +57,12 @@ struct ContentView: View {
                             RoundedRectangle(cornerRadius: 12))
                 }.padding()
                 
-                
-                Button {
-                    selectedIdx == 0 ? login() : register()
+                    Button {
+                        selectedIdx == 0 ? login() : register()
+
+                    }
                     
-                } 
-            
-            label: {
+                label: {
                     
                     Text(selectedIdx == 0 ? "Login":"Create Account").foregroundColor(.white).font(.system(size: 20 , weight: .semibold))
                 }
@@ -84,13 +82,24 @@ struct ContentView: View {
         }
     }
     
-    
-    func login() {
+    private func openn()
+    {
+       if let window = UIApplication.shared.windows.first {
+            window.rootViewController = UIHostingController(rootView : HomeView())
+            window.makeKeyAndVisible()
+        }
+        
+
+    }
+        func login() {
         Auth.auth().signIn(withEmail: emailTextField, password: passwordTextField) { (result, error) in
             if error != nil {
                 print(error?.localizedDescription ?? "")
             } else {
                 print("success login")
+                UserDefaults.standard.set(emailTextField,forKey: "email")
+                openn()
+
             }
         }
     }
@@ -102,6 +111,8 @@ struct ContentView: View {
                 print(error?.localizedDescription ?? "")
             } else {
                 print("success registration")
+                openn()
+
             }
         }
     }
